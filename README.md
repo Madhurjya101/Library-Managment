@@ -35,3 +35,9 @@ This program allows users to manage library books through a simple command-line 
 ```bash
 python library.py
 
+
+👤 Author
+
+Madhurjya Mandit Nath
+Class 9 | Python Learner
+
