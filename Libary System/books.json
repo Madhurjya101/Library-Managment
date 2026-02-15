@@ -1,0 +1,17 @@
+[
+    {
+        "book_id": 1,
+        "title": "Mahabharat",
+        "author": "Ved Vyash"
+    },
+    {
+        "book_id": 2,
+        "title": "Ashimot Jar Heral Seema",
+        "author": "Kanchan Baruah"
+    },
+    {
+        "book_id": 3,
+        "title": "Muru Eta Xopun Ase",
+        "author": "Rubul Mout"
+    }
+]

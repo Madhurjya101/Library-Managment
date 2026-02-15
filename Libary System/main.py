@@ -1,4 +1,6 @@
 
+import json
+
 class Book:
     def __init__(self, book_id, title, author):
         self.book_id = book_id
@@ -6,6 +8,20 @@ class Book:
         self.author = author
     def __str__(self):
         return(f"{self.book_id} : {self.title} : {self.author}")
+    def to_dict(self):
+        return{
+            "book_id": self.book_id,
+            "title": self.title,
+            "author": self.author
+        }
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            data["book_id"],
+            data["title"],
+            data["author"]
+        )
+        
 
 
 def get_valid_id():
@@ -51,22 +67,20 @@ class Library:
     def load_from_file(self):
         self.books = []
         try:
-            with open ("books.txt", "r") as f:
-                for line in f:
-                    line = line.strip()
-                    if not line:
-                        continue    
-                    book_id, title, author = line.split(" | ")
-                    self.books.append(Book(int(book_id), title, author))
-        except FileNotFoundError:
-            print("File not found")
-        except Exception as e:
-            print("Unexpected error: ", e)
+            with open ("books.json", "r") as f:
+                data = json.load(f)
+            for item in data:
+                book = Book.from_dict(item)
+                self.books.append(book)
+        except (FileNotFoundError, json.JSONDecodeError):
+            self.books = []
 
     def save_to_file(self):
-        with open ("books.txt", "w") as f:
-            for book in self.books:
-                f.write(f"{book.book_id} | {book.title.title()} | {book.author.title()}\n")
+        data = []
+        for book in self.books:
+            data.append(book.to_dict())
+        with open ("books.json", "w") as f:
+            json.dump(data, f, indent=4)
 
     def add_book(self):
         while True:
@@ -76,9 +90,9 @@ class Library:
                     print(f"There is already a book with ID {book_id}")
                     return
             break
-        title = get_valid_string("title")
-        author = get_valid_string("author")
-        self.books.append(Book(int(book_id), title, author))
+        title = get_valid_string("title").title()
+        author = get_valid_string("author").title()
+        self.books.append(Book(book_id, title, author))
         self.save_to_file()
         print("\nAddition completed")
 
@@ -88,7 +102,7 @@ class Library:
             if book.book_id == book_id:
                 print(f"\nHere's the book information-\nTitle: {book.title}\nAuthor: {book.author}")
                 return
-        print(f"\nNo book find with ID {book_id} !!")
+        print(f"\nNo book found with ID {book_id} !!")
 
     def view_all_books(self):
         if not self.books:
@@ -106,7 +120,7 @@ class Library:
                 self.save_to_file()
                 print("Deletion completed")
                 return
-        print(f"\nThere is no book with ID {book_id}")
+        print(f"\nNo book found with ID {book_id}")
 
     def update_book(self):
         book_id = get_valid_id()
@@ -117,9 +131,9 @@ class Library:
                 break
         if book_to_update:
             print(f"\nThe current title is '{book_to_update.title}' and the author is '{book_to_update.author}'\n")
-            book_to_update.title = get_valid_string("New title")
+            book_to_update.title = get_valid_string("New title").title()
             print("Title got updated\n")
-            book_to_update.author = get_valid_string("New author")
+            book_to_update.author = get_valid_string("New author").title()
             print("Author got updated")
             self.save_to_file()
         else:
