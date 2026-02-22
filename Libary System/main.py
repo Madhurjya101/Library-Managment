@@ -82,6 +82,9 @@ class Library:
         with open ("books.json", "w") as f:
             json.dump(data, f, indent=4)
 
+    def sort_by_id(self):
+        self.books = sorted(self.books, key = lambda book: book.book_id)
+
     def add_book(self):
         while True:
             book_id = get_valid_id()
@@ -93,6 +96,7 @@ class Library:
         title = get_valid_string("title").title()
         author = get_valid_string("author").title()
         self.books.append(Book(book_id, title, author))
+        self.sort_by_id()
         self.save_to_file()
         print("\nAddition completed")
 
@@ -117,6 +121,7 @@ class Library:
         for book in self.books:
             if book.book_id == book_id:
                 self.books.remove(book)
+                self.sort_by_id()
                 self.save_to_file()
                 print("Deletion completed")
                 return
